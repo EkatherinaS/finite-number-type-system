@@ -10,7 +10,7 @@ namespace Test
     internal class CNFConvertionsTests
     {
 
-        private CNFOrdinal getOrdinal(int n) => new CNFOrdinal(
+        private CNFOrdinal GetOrdinal(int n) => new CNFOrdinal(
             new List<CNFOrdinalTerm>
             {
                 new CNFOrdinalTerm(CNFOrdinal.Zero, n)
@@ -81,13 +81,63 @@ namespace Test
         [Test]
         public void TestAdditionKnuthPlusKnuth()
         {
-            //TODO: sum knuths
+            BigInt v1 = new BigInt(4);
+            BigInt v2 = new BigInt(7);
+
+            KnuthUpArrow a = new KnuthUpArrow(v1, v2, 4);
+            KnuthUpArrow b = new KnuthUpArrow(v2, v1, 4);
+
+            KnuthUpArrow lowerBound = b;
+            KnuthUpArrow upperBound = new KnuthUpArrow(v2 + 1, v1, 4);
+
+            OperationAddition op = new OperationAddition(a, b);
+            ResultPair p = op.Evaluate();
+            Assert.That(p.LowerBound, Is.EqualTo(lowerBound));
+
+            //TODO: Fix the Knuth's comparator0
+            //Assert.That(p.UpperBound, Is.EqualTo(upperBound)); - fails with: Expected: <8↑↑↑↑4> But was:  < 8↑↑↑↑4 >
+            Assert.That(((KnuthUpArrow)p.UpperBound).A, Is.EqualTo(upperBound.A));
+            Assert.That(((KnuthUpArrow)p.UpperBound).B, Is.EqualTo(upperBound.B));
+            Assert.That(((KnuthUpArrow)p.UpperBound).N, Is.EqualTo(upperBound.N));
         }
 
         [Test]
         public void TestAdditionFGHPlusFGH()
         {
-            //TODO: sum FGHs
+            CNFOrdinal ord1 = GetOrdinal(4200);
+            CNFOrdinal ord2 = GetOrdinal(4201);
+
+            BigInt v1 = new BigInt(7);
+            BigInt v2 = new BigInt(8);
+
+            FGH fgh1 = new FGH(ord1, v1);
+            FGH fgh2 = new FGH(ord2, v1);
+            FGH fgh3 = new FGH(ord1, v2);
+
+            //fgh1 + fgh2
+            FGH lowerBound = fgh2;
+            FGH upperBound = new FGH(fgh2.Alpha, fgh2.N + 1);
+
+            OperationAddition op = new OperationAddition(fgh1, fgh2);
+            ResultPair p = op.Evaluate();
+            Assert.That(p.LowerBound, Is.EqualTo(lowerBound));
+
+            //TODO: Fix the FGH's comparator0
+            Assert.That(((FGH)p.UpperBound).Alpha, Is.EqualTo(upperBound.Alpha));
+            Assert.That(((FGH)p.UpperBound).N, Is.EqualTo(upperBound.N));
+
+
+            //fgh1 + fgh3
+            lowerBound = fgh3;
+            upperBound = new FGH(fgh3.Alpha, fgh3.N + 1);
+
+            op = new OperationAddition(fgh1, fgh3);
+            p = op.Evaluate();
+            Assert.That(p.LowerBound, Is.EqualTo(lowerBound));
+
+            //TODO: Fix the FGH's comparator0
+            Assert.That(((FGH)p.UpperBound).Alpha, Is.EqualTo(upperBound.Alpha));
+            Assert.That(((FGH)p.UpperBound).N, Is.EqualTo(upperBound.N));
         }
 
         [Test]
@@ -117,7 +167,7 @@ namespace Test
         public void TestAdditionBigintPlusFGH()
         {
             BigInt a = new BigInt(3);
-            FGH b = new FGH(getOrdinal(1000), a);
+            FGH b = new FGH(GetOrdinal(1000), a);
 
             OperationAddition op1 = new OperationAddition(a, b);
             ResultPair p1 = op1.Evaluate();
@@ -134,7 +184,7 @@ namespace Test
         public void TestAdditionKnuthPlusFGH()
         {
             BigInt a = new BigInt(3);
-            FGH b = new FGH(getOrdinal(1000), a);
+            FGH b = new FGH(GetOrdinal(1000), a);
 
             OperationAddition op1 = new OperationAddition(a, b);
             ResultPair p1 = op1.Evaluate();

@@ -30,6 +30,8 @@ namespace CNFConvertions.Number
             this.alpha = alpha;
             this.n = n;
         }
+        public CNFOrdinal Alpha { get { return alpha; } }
+        public BigInt N { get { return n; } }
 
         public bool Equals(FGH other) => alpha.Equals(other.alpha) && n.Equals(other.n);
 

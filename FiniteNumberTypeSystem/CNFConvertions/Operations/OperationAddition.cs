@@ -13,45 +13,75 @@ namespace CNFConvertions.Operations
             this.b = b;
         }
 
-        //a - BigInt
-        private INumber EvaluateNumbers(BigInt a, BigInt b) => a + b;
 
-        private INumber EvaluateNumbers(BigInt a, KnuthUpArrow b)
+        //a - BigInt
+        private ResultPair EvaluateNumbers(BigInt a, BigInt b)
+        {
+            INumber res = a + b;
+            return new ResultPair(res, res);
+        }
+        private ResultPair EvaluateNumbers(BigInt a, KnuthUpArrow b)
         {
             //TODO: Add BigInt to KnuthUpArrow
-            return b;
+            return new ResultPair(b, b);
         }
-        private INumber EvaluateNumbers(BigInt a, FGH b) => b;
+        private ResultPair EvaluateNumbers(BigInt a, FGH b)
+        {
+            return new ResultPair(b, b);
+        }
 
 
         //a - KnuthUpArrow
-        private INumber EvaluateNumbers(KnuthUpArrow a, BigInt b)
+        private ResultPair EvaluateNumbers(KnuthUpArrow a, BigInt b)
         {
-            return a;
+            return new ResultPair(a, a);
         }
 
-        private INumber EvaluateNumbers(KnuthUpArrow a, KnuthUpArrow b)
+        private ResultPair EvaluateNumbers(KnuthUpArrow a, KnuthUpArrow b)
         {
-            return a;
+            if (a.CompareTo(b) < 0)
+            {
+                KnuthUpArrow upperBound = new KnuthUpArrow(b.A + 1, b.B, b.N);
+                return new ResultPair(b, upperBound);
+            }
+            else
+            {
+                KnuthUpArrow upperBound = new KnuthUpArrow(a.A + 1, a.B, a.N);
+                return new ResultPair(a, upperBound);
+            }
         }
-        private INumber EvaluateNumbers(KnuthUpArrow a, FGH b)
+        private ResultPair EvaluateNumbers(KnuthUpArrow a, FGH b)
         {
-            return b;
+            return new ResultPair(b, b);
         }
+
 
         //a - FGHFunction
-        private INumber EvaluateNumbers(FGH a, BigInt b) => a;
-
-        private INumber EvaluateNumbers(FGH a, KnuthUpArrow b)
+        private ResultPair EvaluateNumbers(FGH a, BigInt b)
         {
-            return a;
-        }
-        private INumber EvaluateNumbers(FGH a, FGH b)
-        {
-            return b;
+            return new ResultPair(a, a);
         }
 
-        private INumber EvaluateNumbers(INumber a, INumber b)
+        private ResultPair EvaluateNumbers(FGH a, KnuthUpArrow b)
+        {
+            return new ResultPair(a, a);
+        }
+        private ResultPair EvaluateNumbers(FGH a, FGH b)
+        {
+            if (a.CompareTo(b) < 0)
+            {
+                FGH upperBound = new FGH(b.Alpha, b.N + 1);
+                return new ResultPair(b, upperBound);
+            }
+            else
+            {
+                FGH upperBound = new FGH(a.Alpha, a.N + 1);
+                return new ResultPair(a, upperBound);
+            }
+        }
+
+
+        private ResultPair EvaluateNumbers(INumber a, INumber b)
         {
             if (a.GetType() == typeof(BigInt))
             {
@@ -118,15 +148,19 @@ namespace CNFConvertions.Operations
             else throw new NotImplementedException();
         }
 
+
         public override ResultPair Evaluate()
         {
             ResultPair numberA = a.Evaluate();
             ResultPair numberB = b.Evaluate();
 
-            INumber resA = EvaluateNumbers(numberA.LowerBound, numberB.LowerBound);
-            INumber resB = EvaluateNumbers(numberA.UpperBound, numberB.UpperBound);
+            ResultPair resA = EvaluateNumbers(numberA.LowerBound, numberB.LowerBound);
+            ResultPair resB = EvaluateNumbers(numberA.UpperBound, numberB.UpperBound);
 
-            return new ResultPair(resA, resB);
+            INumber resLowerbound = resA.LowerBound.CompareTo(resB.LowerBound) < 0 ? resA.LowerBound : resB.LowerBound;
+            INumber resUpperbound = resA.UpperBound.CompareTo(resB.UpperBound) > 0 ? resA.UpperBound : resB.UpperBound;
+
+            return new ResultPair(resLowerbound, resUpperbound);
         }
     }
 }

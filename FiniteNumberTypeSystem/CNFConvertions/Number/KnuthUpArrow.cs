@@ -30,6 +30,10 @@ namespace CNFConvertions.Number
             this.n = n;
         }
 
+        public BigInt A { get { return a; } }
+        public BigInt B { get { return b; } }
+        public int N { get { return n; } }
+
         public override string ToString()
         {
             string baseStr = a.ToString();
@@ -65,6 +69,7 @@ namespace CNFConvertions.Number
             {
                 //TODO: compare BigInt & KnuthUpArrow
                 return -1;
+
             }
             if (other.GetType() == typeof(KnuthUpArrow))
             {
@@ -93,9 +98,6 @@ namespace CNFConvertions.Number
         }
 
         public bool Equals(KnuthUpArrow other) => a == other.a && b == other.b && n == other.n;
-
-
-
 
 
 
