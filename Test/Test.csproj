@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CNFOrdinal\CNFOrdinal.csproj" />
+    <ProjectReference Include="..\FiniteNumberTypeSystem\CNFConvertions\CNFConvertions.csproj" />
   </ItemGroup>
 
 </Project>
