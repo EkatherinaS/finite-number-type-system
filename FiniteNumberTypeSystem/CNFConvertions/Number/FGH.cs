@@ -8,6 +8,9 @@ namespace CNFConvertions.Number
         private CNFOrdinal alpha;
         private BigInt n;
 
+        public CNFOrdinal Alpha { get { return alpha; } set { alpha = value; } }
+        public BigInt N { get { return n; } set { n = value; } }
+
         private static readonly CNFOrdinal MIN_ALPHA = new CNFOrdinal(
             new List<CNFOrdinalTerm>
             {
@@ -19,19 +22,13 @@ namespace CNFConvertions.Number
 
         public FGH(CNFOrdinal alpha, BigInt n)
         {
-            if (alpha.CompareTo(MIN_ALPHA) < 0)
-            {
-                throw new ArgumentException("Base must be bigger than " + Constants.ARROW_COUNT);
-            }
-            if (n < 3)
-            {
-                throw new ArgumentException("Number must be bigger than 3");
-            }
+            if (alpha.CompareTo(MIN_ALPHA) < 0) throw new ArgumentException("Base must be bigger than " + Constants.ARROW_COUNT);
+
+            if (n < 3) throw new ArgumentException("Number must be bigger than 3");
+
             this.alpha = alpha;
             this.n = n;
         }
-        public CNFOrdinal Alpha { get { return alpha; } }
-        public BigInt N { get { return n; } }
 
         public bool Equals(FGH other) => alpha.Equals(other.alpha) && n.Equals(other.n);
 

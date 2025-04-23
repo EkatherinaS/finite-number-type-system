@@ -4,35 +4,28 @@ namespace CNFConvertions.Number
 {
     public class KnuthUpArrow : INumber
     {
-        private BigInt a, b;
-        private int n;
-
         private static readonly KnuthUpArrow MAX_VALUE = new KnuthUpArrow(BigInt.GetMax(), BigInt.GetMax(), Constants.ARROW_COUNT);
         private static readonly KnuthUpArrow MIN_VALUE = new KnuthUpArrow(new BigInt(3), new BigInt(3), 1);
 
+        private BigInt a, b;
+        private int n;
+
+        public BigInt A { get { return a; } set { a = value; } }
+        public BigInt B { get { return b; } set { b = value; } }
+        public int N { get { return n; } set { n = value; } }
+
         public KnuthUpArrow(BigInt a, BigInt b, int n)
         {
-            if (n < 1 || n > Constants.ARROW_COUNT)
-            {
-                throw new ArgumentException("Number of arrows must be a value from the interval 1..1000");
-            }
-            if (a < 3)
-            {
-                throw new ArgumentException("Base must be bigger than 3");
-            }
-            if (b < 3)
-            {
-                throw new ArgumentException("Exponent must be bigger than 3");
-            }
+            if (n < 1 || n > Constants.ARROW_COUNT) throw new ArgumentException("Number of arrows must be a value from the interval 1..1000");
+            
+            if (a < 3) throw new ArgumentException("Base must be bigger than 3");
+
+            if (b < 3) throw new ArgumentException("Exponent must be bigger than 3");
 
             this.a = a;
             this.b = b;
             this.n = n;
         }
-
-        public BigInt A { get { return a; } }
-        public BigInt B { get { return b; } }
-        public int N { get { return n; } }
 
         public override string ToString()
         {
@@ -100,6 +93,26 @@ namespace CNFConvertions.Number
         public bool Equals(KnuthUpArrow other) => a == other.a && b == other.b && n == other.n;
 
 
+        internal BigInt? ToBigInt()
+        {
+            bool toBigInt = false;
+
+            if (n == 1)
+            {
+                toBigInt = BigInteger.Multiply(b, (int)BigInteger.Log10(a)) <= 1000;
+            }
+            else if (n == 2)
+            {
+                toBigInt = a <= new BigInt(4) && b <= new BigInt(3);
+            }
+
+            if (toBigInt)
+            {
+                return new BigInt (Arrow(a, b, n));
+            }
+
+            return null;
+        }
 
         //https://gist.github.com/javierllaca/59b1e3fe5eaa0d25705d
         static BigInteger Arrow(BigInteger a, BigInteger b, int n)
@@ -110,6 +123,7 @@ namespace CNFConvertions.Number
             }
             return Enumerable.Repeat(a, (int)b).Aggregate(BigInteger.One, (x, y) => Arrow(y, x, n - 1));
         }
+
 
         //https://gist.github.com/graninas/358f9c7b80944b7e6a3fe56c6fe09a57
 

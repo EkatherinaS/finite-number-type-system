@@ -8,7 +8,7 @@ public class Program
     private static CNFOrdinal GetOrdinal(int n) => new CNFOrdinal(
         new List<CNFOrdinalTerm>
         {
-                new CNFOrdinalTerm(CNFOrdinal.Zero, n)
+            new CNFOrdinalTerm(CNFOrdinal.Zero, n)
         }
     );
 

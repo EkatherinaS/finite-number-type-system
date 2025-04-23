@@ -2,6 +2,7 @@
 using CNFConvertions;
 using CNFConvertions.Number;
 using CNFConvertions.Operations;
+using System.Numerics;
 
 namespace Test
 {
@@ -9,7 +10,6 @@ namespace Test
     [Timeout(1000)]
     internal class CNFConvertionsTests
     {
-
         private CNFOrdinal GetOrdinal(int n) => new CNFOrdinal(
             new List<CNFOrdinalTerm>
             {
@@ -27,7 +27,6 @@ namespace Test
 
             bigInt = new BigInt(100000);
             Assert.That(bigInt.ToString(), Is.EqualTo("100000"));
-
 
             string max = "1";
             string min = "1";
@@ -75,7 +74,15 @@ namespace Test
         [Test]
         public void TestAdditionBigintPlusBigintOverflow()
         {
-            //TODO: test overflow bigint to knuth
+            BigInt a = BigInt.GetMax();
+            BigInt b = BigInt.GetMax();
+
+            OperationAddition op = new OperationAddition(a, b);
+            ResultPair p = op.Evaluate();
+
+            KnuthUpArrow res = new KnuthUpArrow(new BigInt(10), new BigInt(Constants.EXPONENT + 1), 1);
+            Assert.IsTrue(res.Equals((KnuthUpArrow)p.LowerBound));
+            Assert.IsTrue(res.Equals((KnuthUpArrow)p.UpperBound));
         }
 
         [Test]
@@ -92,13 +99,9 @@ namespace Test
 
             OperationAddition op = new OperationAddition(a, b);
             ResultPair p = op.Evaluate();
-            Assert.That(p.LowerBound, Is.EqualTo(lowerBound));
 
-            //TODO: Fix the Knuth's comparator0
-            //Assert.That(p.UpperBound, Is.EqualTo(upperBound)); - fails with: Expected: <8↑↑↑↑4> But was:  < 8↑↑↑↑4 >
-            Assert.That(((KnuthUpArrow)p.UpperBound).A, Is.EqualTo(upperBound.A));
-            Assert.That(((KnuthUpArrow)p.UpperBound).B, Is.EqualTo(upperBound.B));
-            Assert.That(((KnuthUpArrow)p.UpperBound).N, Is.EqualTo(upperBound.N));
+            Assert.IsTrue(lowerBound.Equals((KnuthUpArrow)p.LowerBound));
+            Assert.IsTrue(upperBound.Equals((KnuthUpArrow)p.UpperBound));
         }
 
         [Test]
@@ -120,12 +123,9 @@ namespace Test
 
             OperationAddition op = new OperationAddition(fgh1, fgh2);
             ResultPair p = op.Evaluate();
-            Assert.That(p.LowerBound, Is.EqualTo(lowerBound));
 
-            //TODO: Fix the FGH's comparator0
-            Assert.That(((FGH)p.UpperBound).Alpha, Is.EqualTo(upperBound.Alpha));
-            Assert.That(((FGH)p.UpperBound).N, Is.EqualTo(upperBound.N));
-
+            Assert.IsTrue(lowerBound.Equals((FGH)p.LowerBound));
+            Assert.IsTrue(upperBound.Equals((FGH)p.UpperBound));
 
             //fgh1 + fgh3
             lowerBound = fgh3;
@@ -133,17 +133,23 @@ namespace Test
 
             op = new OperationAddition(fgh1, fgh3);
             p = op.Evaluate();
-            Assert.That(p.LowerBound, Is.EqualTo(lowerBound));
 
-            //TODO: Fix the FGH's comparator0
-            Assert.That(((FGH)p.UpperBound).Alpha, Is.EqualTo(upperBound.Alpha));
-            Assert.That(((FGH)p.UpperBound).N, Is.EqualTo(upperBound.N));
+            Assert.IsTrue(lowerBound.Equals((FGH)p.LowerBound));
+            Assert.IsTrue(upperBound.Equals((FGH)p.UpperBound));
         }
 
         [Test]
         public void TestAdditionBigintPlusSmallKnuth()
         {
-            //TODO: test bigint plus small knuth
+            KnuthUpArrow a = new KnuthUpArrow(new BigInt(3), new BigInt(3), 1);
+            BigInt b = new BigInt(3);
+
+            OperationAddition op = new OperationAddition(a, b);
+            ResultPair p = op.Evaluate();
+
+            BigInt res = new BigInt(30);
+            Assert.IsTrue(res.Equals((BigInt)p.LowerBound));
+            Assert.IsTrue(res.Equals((BigInt)p.UpperBound));
         }
 
         [Test]
@@ -200,7 +206,29 @@ namespace Test
         [Test]
         public void TestAdditionTree()
         {
-            //TODO: test addition tree
+            BigInt bi1 = new BigInt(1);
+            BigInt bi2 = new BigInt(2);
+            BigInt bi3 = new BigInt(3);
+            BigInt bi4 = new BigInt(4);
+            BigInt bi5 = new BigInt(5);
+            BigInt bi6 = new BigInt(6);
+
+            KnuthUpArrow knuth1 = new KnuthUpArrow(bi5, bi6, 1);
+            KnuthUpArrow knuth2 = new KnuthUpArrow(bi4, bi3, 2);
+
+            OperationAddition op1 = new OperationAddition(bi1, bi2);
+            OperationAddition op2 = new OperationAddition(knuth1, op1);
+            OperationAddition op3 = new OperationAddition(op2, knuth2);
+
+            ResultPair p = op3.Evaluate();
+            BigInt res = new BigInt(4);
+            res = BigInt.Pow(new BigInt(4), (int)res.N);
+            res = BigInt.Pow(new BigInt(4), (int)res.N);
+            res += 15625;
+            res += 3;
+
+            Assert.IsTrue(res.Equals((BigInt)p.LowerBound));
+            Assert.IsTrue(res.Equals((BigInt)p.UpperBound));
         }
     }
 }
