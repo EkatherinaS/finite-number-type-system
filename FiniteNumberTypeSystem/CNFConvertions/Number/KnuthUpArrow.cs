@@ -206,7 +206,11 @@ namespace CNFConvertions.Number
         public override INumber Succ()
         {
             if (a < BigInt.GetMax()) return new KnuthUpArrow((BigInt)a.Succ(), b, n);
-            if (b < BigInt.GetMax()) return new KnuthUpArrow(new BigInt(3), (BigInt)b.Succ(), n);
+            if (b < BigInt.GetMax())
+            {
+                if (n < 3) return new KnuthUpArrow(a, (BigInt)b.Succ(), n);
+                else return new KnuthUpArrow(new BigInt(3), (BigInt)b.Succ(), n);
+            }
             if (n < Constants.ARROW_COUNT)
             {
                 //KnuthUpArrow(10^1000, 10^1000, 1) => KnuthUpArrow(3, 5, 2)
