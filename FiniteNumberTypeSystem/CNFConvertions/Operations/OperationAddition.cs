@@ -1,4 +1,5 @@
-﻿using CNFConvertions.Number;
+﻿using System;
+using CNFConvertions.Number;
 using System.Numerics;
 
 namespace CNFConvertions.Operations
@@ -11,7 +12,7 @@ namespace CNFConvertions.Operations
             this.b = b;
         }
 
-        public ResultPair EvaluateNumbers(BigInt a, BigInt b)
+        protected override ResultPair EvaluateNumbers(BigInt a, BigInt b)
         {
             INumber res;
             BigInteger sum = a.N + b.N;
@@ -29,36 +30,33 @@ namespace CNFConvertions.Operations
             return new ResultPair(res, res);
         }
 
-        public ResultPair EvaluateNumbers(KnuthUpArrow a, KnuthUpArrow b)
+        protected override ResultPair EvaluateNumbers(KnuthUpArrow a, KnuthUpArrow b)
         {
             if (a.CompareTo(b) < 0) return new ResultPair(b, b.Succ());
             else return new ResultPair(a, a.Succ());
         }
 
-        public ResultPair EvaluateNumbers(FGH a, FGH b)
+        protected override ResultPair EvaluateNumbers(FGH a, FGH b)
         {
             if (a.CompareTo(b) < 0) return new ResultPair(b, b.Succ());
             else return new ResultPair(a, a.Succ());
         }
 
 
-        public ResultPair EvaluateNumbers(BigInt a, KnuthUpArrow b)
+        protected override ResultPair EvaluateNumbers(BigInt a, KnuthUpArrow b)
         {
             BigInt? converted = b.ToBigInt();
             return converted is null ? new ResultPair(b, b.Succ()) : EvaluateNumbers(a, converted);
         }
 
-        public ResultPair EvaluateNumbers(BigInt a, FGH b) => new ResultPair(b, b.Succ());
+        protected override ResultPair EvaluateNumbers(BigInt a, FGH b) => new ResultPair(b, b.Succ());
 
-        public ResultPair EvaluateNumbers(KnuthUpArrow a, FGH b) => new ResultPair(b, b.Succ());
+        protected override ResultPair EvaluateNumbers(KnuthUpArrow a, FGH b) => new ResultPair(b, b.Succ());
 
 
-        public ResultPair EvaluateNumbers(KnuthUpArrow a, BigInt b) => EvaluateNumbers(b, a);
-
-        public ResultPair EvaluateNumbers(FGH a, BigInt b) => EvaluateNumbers(b, a);
-
-        public ResultPair EvaluateNumbers(FGH a, KnuthUpArrow b) => EvaluateNumbers(b, a);
-
-        protected override ResultPair EvaluateNumbers(INumber a, INumber b) => EvaluateNumbers((dynamic)a, (dynamic)b);
+        // The following are handled by the base class IOperation using the specific overrides above
+        // public ResultPair EvaluateNumbers(KnuthUpArrow a, BigInt b) => EvaluateNumbers(b, a);
+        // public ResultPair EvaluateNumbers(FGH a, BigInt b) => EvaluateNumbers(b, a);
+        // public ResultPair EvaluateNumbers(FGH a, KnuthUpArrow b) => EvaluateNumbers(b, a);
     }
 }
