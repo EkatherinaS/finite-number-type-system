@@ -65,6 +65,12 @@ namespace CNFConvertions.Number
             else return new KnuthUpArrow(10, CountDigits(n), 1);
         }
 
+        public BigInt Prev()
+        {
+            if (n > MIN_VALUE) return new BigInt(n - 1);
+            else throw new ArgumentException("BigInt cannot be smaller than " + MIN_VALUE);
+        }
+
         public override int GetHashCode() => n.GetHashCode();
 
         public override bool Equals(object? obj)

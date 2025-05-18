@@ -66,7 +66,7 @@ namespace CNFConvertions.Number
         public static KnuthUpArrow GetMax() => MAX_VALUE;
         public static KnuthUpArrow GetMin() => MIN_VALUE;
 
-        private static KnuthUpArrow? ToOneArrow(KnuthUpArrow twoArrow)
+        public static KnuthUpArrow? ToOneArrow(KnuthUpArrow twoArrow)
         {
             KnuthUpArrow right = new KnuthUpArrow(twoArrow.A, new BigInt(((BigInteger)twoArrow.B) - 1), 2);
             BigInt? newB = right.ToBigInt();
