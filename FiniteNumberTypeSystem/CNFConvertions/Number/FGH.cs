@@ -1,4 +1,6 @@
-﻿using Assets.Scripts.AssemblyMath;
+﻿using System;
+using System.Collections.Generic;
+using Assets.Scripts.AssemblyMath;
 
 
 namespace CNFConvertions.Number

@@ -1,4 +1,6 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Linq;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 
 namespace CNFConvertions.Number
@@ -107,9 +109,9 @@ namespace CNFConvertions.Number
                     KnuthUpArrow? oneArrowThis = ToOneArrow(this);
                     KnuthUpArrow? oneArrowOther = ToOneArrow(item);
 
-                    if (oneArrowThis is not null && oneArrowOther is null) return -1;
-                    else if (oneArrowThis is null && oneArrowOther is not null) return 1;
-                    else if (oneArrowThis is not null && oneArrowOther is not null) return oneArrowThis.CompareTo(oneArrowOther);
+                    if (oneArrowThis != null && oneArrowOther is null) return -1;
+                    else if (oneArrowThis is null && oneArrowOther != null) return 1;
+                    else if (oneArrowThis != null && oneArrowOther != null) return oneArrowThis.CompareTo(oneArrowOther);
                     else
                     {
                         BigInteger a1, b1, a2, b2;
@@ -149,7 +151,7 @@ namespace CNFConvertions.Number
                         // x.a^^x.a > y.a -> x.a^^x.a в BigInt и сравниваем x.a^^(x.a^^x.a) и y.a^^y.a
 
                         BigInt? xBigInt = x.ToBigInt();
-                        if (x >= item.A && xBigInt is not null)
+                        if (x >= item.A && xBigInt != null)
                         {
                             KnuthUpArrow xBig = new KnuthUpArrow(a, xBigInt, 2);
                             return xBig.CompareTo(y);
@@ -158,7 +160,7 @@ namespace CNFConvertions.Number
                         // y.a^^y.a > x.a -> y.a^^y.a в BigInt и сравниваем y.a^^(y.a^^y.a) и x.a^^x.a
 
                         BigInt? yBigInt = y.ToBigInt();
-                        if (y >= a && yBigInt is not null)
+                        if (y >= a && yBigInt != null)
                         {
                             KnuthUpArrow yBig = new KnuthUpArrow(item.A, yBigInt, 2);
                             return yBig.CompareTo(x);

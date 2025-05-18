@@ -1,9 +1,10 @@
-﻿using CNFConvertions.Number;
+﻿using System;
+using CNFConvertions.Number;
 using System.Numerics;
 
 namespace CNFConvertions.Operations
 {
-    internal class OperationMultiplication : IOperation
+    public class OperationMultiplication : IOperation
     {
         public OperationMultiplication(IExpression a, IExpression b)
         {
@@ -11,11 +12,18 @@ namespace CNFConvertions.Operations
             this.b = b;
         }
 
-        public ResultPair EvaluateNumbers(BigInt a, BigInt b)
+        // Evaluate() is inherited. Override if specific logic is needed.
+        // public override ResultPair Evaluate()
+        // {
+        //     throw new NotImplementedException();
+        // }
+
+        protected override ResultPair EvaluateNumbers(BigInt a, BigInt b)
         {
             INumber res;
             int length = BigInt.CountDigits(a) + BigInt.CountDigits(b) + 1;
-            if (length <= Constants.ARROW_COUNT) {
+            if (length <= Constants.ARROW_COUNT)
+            {
                 res = new BigInt(BigInteger.Multiply(a, b));
             }
             else
@@ -27,7 +35,7 @@ namespace CNFConvertions.Operations
             return new ResultPair(res, res);
         }
 
-        public ResultPair EvaluateNumbers(KnuthUpArrow a, KnuthUpArrow b)
+        protected override ResultPair EvaluateNumbers(KnuthUpArrow a, KnuthUpArrow b)
         {
             INumber upperbound, lowerbound;
             if (a.N == 1 && b.N == 1)
@@ -56,15 +64,15 @@ namespace CNFConvertions.Operations
                 }
                 return new ResultPair(lowerbound, upperbound);
             }
-            else if(a.N == 1 && b.N == 2)
+            else if (a.N == 1 && b.N == 2)
             {
                 KnuthUpArrow? oneArrowB = KnuthUpArrow.ToOneArrow(b);
                 //TODO: 1 arrow & 2 arrow multiplication
                 if (oneArrowB is null) throw new NotImplementedException();
                 else return EvaluateNumbers(a, oneArrowB);
             }
-            else if(a.N == 2 && b.N == 1) return EvaluateNumbers(b, a);
-            else if(a.N == 2 && b.N == 2)
+            else if (a.N == 2 && b.N == 1) return EvaluateNumbers(b, a);
+            else if (a.N == 2 && b.N == 2)
             {
                 //TODO: 2 arrow & 2 arrow multiplication
                 throw new NotImplementedException();
@@ -73,19 +81,18 @@ namespace CNFConvertions.Operations
             else throw new NotImplementedException();
         }
 
-        public ResultPair EvaluateNumbers(FGH a, FGH b)
+        protected override ResultPair EvaluateNumbers(FGH a, FGH b)
         {
             if (a > b) return new ResultPair(a, a.Succ());
             else return new ResultPair(b, b.Succ());
         }
 
-
-        public ResultPair EvaluateNumbers(BigInt a, KnuthUpArrow b)
+        protected override ResultPair EvaluateNumbers(BigInt a, KnuthUpArrow b)
         {
             if (b.N > 2) return new ResultPair(b, b.Succ());
 
             BigInt? bigIntB = b.ToBigInt();
-            if (bigIntB is not null) return EvaluateNumbers(bigIntB, a);
+            if (bigIntB != null) return EvaluateNumbers(bigIntB, a);
 
             if (b.N == 1 && a < b.A) return new ResultPair(b, b.Succ());
             if (b.N == 1 && a >= b.A) return new ResultPair(b.Succ(), b.Succ().Succ());
@@ -98,17 +105,8 @@ namespace CNFConvertions.Operations
             else return new ResultPair(b, b.Succ());
         }
 
-        public ResultPair EvaluateNumbers(BigInt a, FGH b) => new ResultPair(b, b.Succ());
+        protected override ResultPair EvaluateNumbers(BigInt a, FGH b) => new ResultPair(b, b.Succ());
 
-        public ResultPair EvaluateNumbers(KnuthUpArrow a, FGH b) => new ResultPair(b, b.Succ());
-
-
-        public ResultPair EvaluateNumbers(KnuthUpArrow a, BigInt b) => EvaluateNumbers(b, a);
-
-        public ResultPair EvaluateNumbers(FGH a, BigInt b) => EvaluateNumbers(b, a);
-
-        public ResultPair EvaluateNumbers(FGH a, KnuthUpArrow b) => EvaluateNumbers(b, a);
-
-        protected override ResultPair EvaluateNumbers(INumber a, INumber b) => EvaluateNumbers((dynamic)a, (dynamic)b);
+        protected override ResultPair EvaluateNumbers(KnuthUpArrow a, FGH b) => new ResultPair(b, b.Succ());
     }
 }

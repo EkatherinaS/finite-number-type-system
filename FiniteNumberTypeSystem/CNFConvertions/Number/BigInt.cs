@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 
 namespace CNFConvertions.Number
 {
@@ -50,7 +51,7 @@ namespace CNFConvertions.Number
             {
                 KnuthUpArrow item = (KnuthUpArrow)other;
                 BigInt? itemBigInt = item.ToBigInt();
-                if (itemBigInt is not null) return CompareTo(itemBigInt);
+                if (itemBigInt != null) return CompareTo(itemBigInt);
                 else return 1;
             }
 
