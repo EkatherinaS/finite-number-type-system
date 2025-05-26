@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Numerics;
-using System.Runtime.CompilerServices;
 
 namespace CNFConvertions.Number
 {
@@ -68,12 +67,12 @@ namespace CNFConvertions.Number
         public static KnuthUpArrow GetMax() => MAX_VALUE;
         public static KnuthUpArrow GetMin() => MIN_VALUE;
 
-        public static KnuthUpArrow? ToOneArrow(KnuthUpArrow twoArrow)
+        public KnuthUpArrow? ToOneArrow()
         {
-            KnuthUpArrow right = new KnuthUpArrow(twoArrow.A, new BigInt(((BigInteger)twoArrow.B) - 1), 2);
+            KnuthUpArrow right = new KnuthUpArrow(a, new BigInt(((BigInteger)b) - 1), 2);
             BigInt? newB = right.ToBigInt();
             if (newB is null) return null;
-            else return new KnuthUpArrow(twoArrow.A, newB, 1);
+            else return new KnuthUpArrow(a, newB, 1);
         }
 
         public override int CompareTo(INumber? other)
@@ -106,12 +105,12 @@ namespace CNFConvertions.Number
 
                 if (n == 2 && item.N == 2)
                 {
-                    KnuthUpArrow? oneArrowThis = ToOneArrow(this);
-                    KnuthUpArrow? oneArrowOther = ToOneArrow(item);
+                    KnuthUpArrow? oneArrowThis = this.ToOneArrow();
+                    KnuthUpArrow? oneArrowOther = item.ToOneArrow();
 
-                    if (oneArrowThis != null && oneArrowOther is null) return -1;
-                    else if (oneArrowThis is null && oneArrowOther != null) return 1;
-                    else if (oneArrowThis != null && oneArrowOther != null) return oneArrowThis.CompareTo(oneArrowOther);
+                    if (!(oneArrowThis is null) && oneArrowOther is null) return -1;
+                    else if (oneArrowThis is null && !(oneArrowOther is null)) return 1;
+                    else if (!(oneArrowThis is null) && !(oneArrowOther is null)) return oneArrowThis.CompareTo(oneArrowOther);
                     else
                     {
                         BigInteger a1, b1, a2, b2;
@@ -151,7 +150,7 @@ namespace CNFConvertions.Number
                         // x.a^^x.a > y.a -> x.a^^x.a в BigInt и сравниваем x.a^^(x.a^^x.a) и y.a^^y.a
 
                         BigInt? xBigInt = x.ToBigInt();
-                        if (x >= item.A && xBigInt != null)
+                        if (x >= item.A && !(xBigInt is null))
                         {
                             KnuthUpArrow xBig = new KnuthUpArrow(a, xBigInt, 2);
                             return xBig.CompareTo(y);
@@ -160,7 +159,7 @@ namespace CNFConvertions.Number
                         // y.a^^y.a > x.a -> y.a^^y.a в BigInt и сравниваем y.a^^(y.a^^y.a) и x.a^^x.a
 
                         BigInt? yBigInt = y.ToBigInt();
-                        if (y >= a && yBigInt != null)
+                        if (y >= a && !(yBigInt is null))
                         {
                             KnuthUpArrow yBig = new KnuthUpArrow(item.A, yBigInt, 2);
                             return yBig.CompareTo(x);
@@ -171,7 +170,7 @@ namespace CNFConvertions.Number
 
                 if (n == 1 && item.N == 2)
                 {
-                    KnuthUpArrow? oneArrowOther = ToOneArrow(item);
+                    KnuthUpArrow? oneArrowOther = item.ToOneArrow();
                     if (oneArrowOther is null) return -1;
                     else return CompareTo(oneArrowOther);
                 }
@@ -201,18 +200,30 @@ namespace CNFConvertions.Number
             if (n == 1) toBigInt = BigInteger.Multiply(b, (int)Math.Ceiling(BigInteger.Log10(a))) <= 1000;
             if (n == 2) toBigInt = (a <= new BigInt(4)) && (b <= new BigInt(3));
 
-            if (toBigInt) return new BigInt (Arrow(a, b, n));
+            if (toBigInt) return new BigInt(Arrow(a, b, n));
             else return null;
         }
 
-        public override INumber Succ()
+        public override INumber Succ() => SuccA();
+
+        public INumber SuccA()
         {
             if (a < BigInt.GetMax()) return new KnuthUpArrow((BigInt)a.Succ(), b, n);
+            return SuccB();
+        }
+
+        public INumber SuccB()
+        {
             if (b < BigInt.GetMax())
             {
                 if (n < 3) return new KnuthUpArrow(a, (BigInt)b.Succ(), n);
                 else return new KnuthUpArrow(new BigInt(3), (BigInt)b.Succ(), n);
             }
+            return SuccN();
+        }
+
+        public INumber SuccN()
+        {
             if (n < Constants.ARROW_COUNT)
             {
                 //KnuthUpArrow(10^1000, 10^1000, 1) => KnuthUpArrow(3, 5, 2)

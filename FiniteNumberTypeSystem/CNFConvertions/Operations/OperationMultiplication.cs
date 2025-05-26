@@ -1,6 +1,4 @@
-﻿using System;
-using CNFConvertions.Number;
-using System.Numerics;
+﻿using CNFConvertions.Number;
 
 namespace CNFConvertions.Operations
 {
@@ -12,73 +10,45 @@ namespace CNFConvertions.Operations
             this.b = b;
         }
 
-        // Evaluate() is inherited. Override if specific logic is needed.
-        // public override ResultPair Evaluate()
-        // {
-        //     throw new NotImplementedException();
-        // }
-
         protected override ResultPair EvaluateNumbers(BigInt a, BigInt b)
         {
             INumber res;
-            int length = BigInt.CountDigits(a) + BigInt.CountDigits(b) + 1;
-            if (length <= Constants.ARROW_COUNT)
+
+            BigInt? temp = BigInt.Mul(a, b);
+            if (temp is null)
             {
-                res = new BigInt(BigInteger.Multiply(a, b));
-            }
-            else
-            {
+                int length = BigInt.CountDigits(a) + BigInt.CountDigits(b) + 1;
                 BigInt knuthA = new BigInt(10);
                 BigInt knuthB = new BigInt(length);
                 res = new KnuthUpArrow(knuthA, knuthB, 1);
             }
+            else res = temp;
+
             return new ResultPair(res, res);
         }
 
         protected override ResultPair EvaluateNumbers(KnuthUpArrow a, KnuthUpArrow b)
         {
-            INumber upperbound, lowerbound;
+            //LB = (x.a^(y.b / log(y.a, x.a) + x.b)); UB = LB++;
             if (a.N == 1 && b.N == 1)
             {
-                OperationAddition op = new OperationAddition(a.A, b.A);
-                INumber newB = op.Evaluate().UpperBound;
+                BigInt temp = BigInt.Div(a.A, BigInt.Sum(BigInt.Log(b.A, a.A), a.B));
+                INumber lb = new KnuthUpArrow(b.A, temp, 1);
+                return new ResultPair(lb, lb.Succ());
+            }
 
-                //INumber newB = a.A ^ (b.B / BigInteger.Log(a.A, (double)b.A) + a.B);
-                if (newB.GetType() == typeof(BigInt))
-                {
-                    if (a.A < b.A)
-                    {
-                        lowerbound = new KnuthUpArrow(a.A, (BigInt)newB, a.N);
-                        upperbound = new KnuthUpArrow(b.A, (BigInt)newB, a.N);
-                    }
-                    else
-                    {
-                        lowerbound = new KnuthUpArrow(a.A, (BigInt)newB, a.N);
-                        upperbound = new KnuthUpArrow(b.A, (BigInt)newB, a.N);
-                    }
-                }
-                else
-                {
-                    lowerbound = new KnuthUpArrow(b.A, BigInt.GetMax(), a.N);
-                    upperbound = new KnuthUpArrow(3, 3, a.N + 1);
-                }
-                return new ResultPair(lowerbound, upperbound);
+            //eval as one arrow if possible
+            KnuthUpArrow? knuthOneA = a.ToOneArrow();
+            KnuthUpArrow? knuthOneB = b.ToOneArrow();
+            if (!(knuthOneA is null || knuthOneB is null)) return EvaluateNumbers(knuthOneA, knuthOneB);
+
+            if (a.N <= 2 && b.N <= 2) {
+                if (a > b) return new ResultPair(a, a.SuccB());
+                else return new ResultPair(b, b.SuccB());
             }
-            else if (a.N == 1 && b.N == 2)
-            {
-                KnuthUpArrow? oneArrowB = KnuthUpArrow.ToOneArrow(b);
-                //TODO: 1 arrow & 2 arrow multiplication
-                if (oneArrowB is null) throw new NotImplementedException();
-                else return EvaluateNumbers(a, oneArrowB);
-            }
-            else if (a.N == 2 && b.N == 1) return EvaluateNumbers(b, a);
-            else if (a.N == 2 && b.N == 2)
-            {
-                //TODO: 2 arrow & 2 arrow multiplication
-                throw new NotImplementedException();
-            }
-            //TODO: 2+ arrow multiplication
-            else throw new NotImplementedException();
+
+            if (a > b) return new ResultPair(a, a.SuccA());
+            else return new ResultPair(b, b.SuccA());
         }
 
         protected override ResultPair EvaluateNumbers(FGH a, FGH b)
@@ -89,20 +59,25 @@ namespace CNFConvertions.Operations
 
         protected override ResultPair EvaluateNumbers(BigInt a, KnuthUpArrow b)
         {
-            if (b.N > 2) return new ResultPair(b, b.Succ());
+            //eval as two BigInt-s if possible
+            BigInt? bi = b.ToBigInt();
+            if (!(bi is null)) return EvaluateNumbers(a, bi);
 
-            BigInt? bigIntB = b.ToBigInt();
-            if (bigIntB != null) return EvaluateNumbers(bigIntB, a);
+            //eval if one arrow
+            if (b.N == 1)
+            {
+                //LB = (y.a^(1/ log(x, y.a) + y.b)); UB = LB++;
+                BigInt temp = BigInt.Div(new BigInt(1), BigInt.Sum(BigInt.Log(a, b.A), b.B));
+                INumber lb = new KnuthUpArrow(b.A, temp, 1);
+                return new ResultPair(lb, lb.Succ());
+            }
 
-            if (b.N == 1 && a < b.A) return new ResultPair(b, b.Succ());
-            if (b.N == 1 && a >= b.A) return new ResultPair(b.Succ(), b.Succ().Succ());
+            //eval as one arrow if possible
+            KnuthUpArrow? knuthOne  = b.ToOneArrow();
+            if (!(knuthOne is null)) return EvaluateNumbers(a, knuthOne);
 
-            INumber nextA = b.A.Succ();
-            if (nextA.GetType() == typeof(BigInt)) return new ResultPair(b, b.Succ());
-
-            KnuthUpArrow cmp = new KnuthUpArrow((BigInt)nextA, b.B.Prev(), 2);
-            if (a > cmp) return new ResultPair(b.Succ(), b.Succ().Succ());
-            else return new ResultPair(b, b.Succ());
+            //y .a "+1" в UB
+            return new ResultPair(b, b.Succ());
         }
 
         protected override ResultPair EvaluateNumbers(BigInt a, FGH b) => new ResultPair(b, b.Succ());

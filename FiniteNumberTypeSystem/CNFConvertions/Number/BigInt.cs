@@ -6,10 +6,11 @@ namespace CNFConvertions.Number
     public class BigInt : INumber
     {
         private static readonly BigInteger MAX = BigInteger.Pow(10, Constants.EXPONENT);
+        private static readonly BigInteger LOG_BASE_MAX = new BigInteger(double.MaxValue);
 
         private static readonly BigInt MAX_VALUE = new BigInt(MAX);
         private static readonly BigInt MIN_VALUE = new BigInt(1);
-
+        
 
         private BigInteger n;
         public BigInteger N { get { return n; } set { n = value; } }
@@ -51,7 +52,7 @@ namespace CNFConvertions.Number
             {
                 KnuthUpArrow item = (KnuthUpArrow)other;
                 BigInt? itemBigInt = item.ToBigInt();
-                if (itemBigInt != null) return CompareTo(itemBigInt);
+                if (!(itemBigInt is null)) return CompareTo(itemBigInt);
                 else return 1;
             }
 
@@ -85,8 +86,53 @@ namespace CNFConvertions.Number
         public static implicit operator BigInteger(BigInt bigInt) => bigInt.n;
 
         public static bool IsConvertible(BigInteger n) => (n >= 1 && n <= MAX);
-        public static BigInt Pow(BigInt a, int exponent) => new BigInt(BigInteger.Pow(a.n, exponent));
-        public static BigInt ModPow(BigInt a, int exponent, int mod) => new BigInt(BigInteger.ModPow(a.n, exponent, mod));
+        public static BigInt? Sum(BigInt a, BigInt b)
+        {
+            BigInteger res = BigInteger.Add(a.n, b.n);
+            if (IsConvertible(res)) return new BigInt(res);
+            else return null;
+        }
+        public static BigInt? Mul(BigInt a, BigInt b)
+        {
+            BigInteger res = BigInteger.Multiply(a.n, b.n);
+            if (IsConvertible(res)) return new BigInt(res);
+            else return null;
+        }
+        public static BigInt? Pow(BigInt a, int exponent)
+        {
+            BigInteger res = BigInteger.Pow(a.n, exponent);
+            if (IsConvertible(res)) return new BigInt(res);
+            else return null;
+        }
+        public static BigInt? Log(BigInt b, BigInt val)
+        {
+            //while double is enough
+            if (b.N <= LOG_BASE_MAX)
+            {
+                double baseDouble = (double)b.N;
+                return new BigInt((BigInteger)BigInteger.Log(val.N, baseDouble));
+            }
+            //otherwise get approximate value - log_a(b) = lg(b) / lg(a)
+            else
+            {
+                BigInt? baseLg = Lg(b);
+                BigInt? valLg = Lg(val);
+                if (baseLg is null || valLg is null) return null;
+                else return Div(valLg, baseLg);
+            }
+        }
+        public static BigInt? Lg(BigInt a)
+        {
+            BigInteger res = (BigInteger)BigInteger.Log10(a.n);
+            if (IsConvertible(res)) return new BigInt(res);
+            else return null;
+        }
+        public static BigInt? Div(BigInt a, BigInt b)
+        {
+            BigInteger res = BigInteger.Divide(a.n, b.n);
+            if (IsConvertible(res)) return new BigInt(res);
+            else return null;
+        }
 
         public static bool operator >=(BigInt a, int b) => a.n >= b;
         public static bool operator <=(BigInt a, int b) => a.n <= b;
