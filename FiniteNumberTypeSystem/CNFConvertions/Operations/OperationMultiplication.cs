@@ -17,9 +17,8 @@ namespace CNFConvertions.Operations
             BigInt? temp = BigInt.Mul(a, b);
             if (temp is null)
             {
-                int length = BigInt.CountDigits(a) + BigInt.CountDigits(b) + 1;
                 BigInt knuthA = new BigInt(10);
-                BigInt knuthB = new BigInt(length);
+                BigInt knuthB = (BigInt)BigInt.Sum(BigInt.Lg(a), BigInt.Lg(b)).Succ();
                 res = new KnuthUpArrow(knuthA, knuthB, 1);
             }
             else res = temp;
