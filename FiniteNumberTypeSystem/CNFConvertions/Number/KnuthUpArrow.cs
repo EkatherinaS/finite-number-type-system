@@ -69,7 +69,7 @@ namespace CNFConvertions.Number
 
         public KnuthUpArrow? ToOneArrow()
         {
-            BigInt? newB = EvalTower(a, new BigInt(((BigInteger)b) - 1), 2);
+            BigInt? newB = EvalTower(a, new BigInt(((BigInteger)b) - 1), n);
             if (newB is null) return null;
             else return new KnuthUpArrow(a, newB, 1);
         }
@@ -197,12 +197,14 @@ namespace CNFConvertions.Number
 
         public BigInt? ToBigInt() => EvalTower(a, b, n);
 
-        private static BigInt EvalTower(BigInt a, BigInt b, int n)
+        private static BigInt? EvalTower(BigInt a, BigInt b, int n)
         {
             bool toBigInt = false;
 
             if (n == 1 && b.N < new BigInteger(double.MaxValue)) toBigInt = ((double)b.N * BigInteger.Log10(a)) <= 1000;
-            if (n == 2) toBigInt = (a <= new BigInt(4)) && (b <= new BigInt(3));
+            if (n == 2 && b == 3) toBigInt = a <= new BigInt(4);
+            if (n == 2 && b == 2) toBigInt = a <= new BigInt(386);
+            if (n == 2 && b == 1) toBigInt = a <= BigInt.GetMax();
 
             if (toBigInt) return new BigInt(Arrow(a, b, n));
             else return null;

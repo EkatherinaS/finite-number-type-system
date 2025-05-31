@@ -18,7 +18,7 @@ namespace CNFConvertions.Operations
             if (temp is null)
             {
                 BigInt knuthA = new BigInt(10);
-                BigInt knuthB = (BigInt)BigInt.Sum(BigInt.Lg(a), BigInt.Lg(b)).Succ();
+                BigInt knuthB = new BigInt(INumber.CountDigits(a) - 1 + INumber.CountDigits(b) - 1 + 1);
                 res = new KnuthUpArrow(knuthA, knuthB, 1);
             }
             else res = temp;
@@ -28,11 +28,18 @@ namespace CNFConvertions.Operations
 
         protected override ResultPair EvaluateNumbers(KnuthUpArrow a, KnuthUpArrow b)
         {
-            //LB = (x.a^(y.b / log(y.a, x.a) + x.b)); UB = LB++;
+            BigInt? ai = a.ToBigInt();
+            BigInt? bi = b.ToBigInt();
+            if (!(ai is null) && !(bi is null)) return EvaluateNumbers(ai, bi);
+            if ((ai is null) && !(bi is null)) return EvaluateNumbers(bi, a);
+            if (!(ai is null) && (bi is null)) return EvaluateNumbers(ai, b);
+
+            //LB = (x.a^(y.b * log(x.a, y.a) + x.b)) UB = LB++
             if (a.N == 1 && b.N == 1)
             {
-                BigInt temp = BigInt.Div(a.A, BigInt.Sum(BigInt.Log(b.A, a.A), a.B));
-                INumber lb = new KnuthUpArrow(b.A, temp, 1);
+                if (a.A > b.A || (a.A == b.A && a.B < b.B)) return EvaluateNumbers(b, a);
+                BigInt temp = BigInt.Sum(BigInt.Mul(b.B, BigInt.Log(a.A, b.A)), a.B);
+                INumber lb = new KnuthUpArrow(a.A, temp, 1);
                 return new ResultPair(lb, lb.Succ());
             }
 
@@ -65,8 +72,8 @@ namespace CNFConvertions.Operations
             //eval if one arrow
             if (b.N == 1)
             {
-                //LB = (y.a^(1/ log(x, y.a) + y.b)); UB = LB++;
-                BigInt temp = BigInt.Div(new BigInt(1), BigInt.Sum(BigInt.Log(a, b.A), b.B));
+                //LB = (x.a^(log(x.a, y) + x.b)) UB = LB++
+                BigInt temp = BigInt.Sum(BigInt.Log(b.A, a), b.B);
                 INumber lb = new KnuthUpArrow(b.A, temp, 1);
                 return new ResultPair(lb, lb.Succ());
             }

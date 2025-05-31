@@ -109,28 +109,17 @@ namespace CNFConvertions.Number
             if (b.N <= LOG_BASE_MAX)
             {
                 double baseDouble = (double)b.N;
-                return new BigInt((BigInteger)BigInteger.Log(val.N, baseDouble));
+                return new BigInt((BigInteger)Math.Ceiling(BigInteger.Log(val.N, baseDouble)));
             }
             //otherwise get approximate value - log_a(b) = lg(b) / lg(a)
             else
             {
-                BigInt? baseLg = Lg(b);
-                BigInt? valLg = Lg(val);
-                if (baseLg is null || valLg is null) return null;
-                else return Div(valLg, baseLg);
+                BigInteger baseLg = (BigInteger)BigInteger.Log10(b.n);
+                BigInteger valLg = (BigInteger)BigInteger.Log10(val.n);
+                BigInteger res = BigInteger.Divide(valLg, baseLg);
+                if (IsConvertible(res)) return new BigInt(res);
+                else return null;
             }
-        }
-        public static BigInt? Lg(BigInt a)
-        {
-            BigInteger res = (BigInteger)BigInteger.Log10(a.n);
-            if (IsConvertible(res)) return new BigInt(res);
-            else return null;
-        }
-        public static BigInt? Div(BigInt a, BigInt b)
-        {
-            BigInteger res = BigInteger.Divide(a.n, b.n);
-            if (IsConvertible(res)) return new BigInt(res);
-            else return null;
         }
 
         public static bool operator >=(BigInt a, int b) => a.n >= b;

@@ -47,15 +47,16 @@ namespace CNFTestsNamespace
             KnuthUpArrow res;
 
             //TODO: Check which Knuth it overflows to
+            //TODO: Where does +3 coming from?
 
             a = BigInt.GetMax();
             b = new BigInt(2);
-            res = new KnuthUpArrow(10, Constants.EXPONENT, 1);
+            res = new KnuthUpArrow(10, Constants.EXPONENT + 1, 1);
             Test(a, b, res, res);
 
             a = BigInt.GetMax();
             b = BigInt.GetMax();
-            res = new KnuthUpArrow(10, 2 * Constants.EXPONENT, 1);
+            res = new KnuthUpArrow(10, 2 * Constants.EXPONENT + 1, 1);
             Test(a, b, res, res);
         }
 
@@ -166,8 +167,8 @@ namespace CNFTestsNamespace
 
             a = new KnuthUpArrow(new BigInt(3), new BigInt(3), 3);
             b = new KnuthUpArrow(BigInt.GetMax(), BigInt.GetMax(), 2);
-            lb = new KnuthUpArrow(new BigInt(3), new BigInt(3), 3);
-            ub = new KnuthUpArrow(new BigInt(4), new BigInt(3), 3);
+            lb = new KnuthUpArrow(BigInt.GetMax(), BigInt.GetMax(), 2);
+            ub = new KnuthUpArrow(new BigInt(3), new BigInt(4), 3);
             Test(a, b, lb, ub);
 
             a = new KnuthUpArrow(new BigInt(3), new BigInt(3), 3);
@@ -228,8 +229,8 @@ namespace CNFTestsNamespace
 
             a = new KnuthUpArrow(new BigInt(3), new BigInt(3), 2);
             b2 = new KnuthUpArrow(new BigInt(3), new BigInt(3), 2);
-            lb = new BigInt(BigInteger.Parse("58149737003040060000000000"));
-            ub = new BigInt(BigInteger.Parse("58149737003040060000000000"));
+            lb = new BigInt(BigInteger.Parse("58149737003040059690390169"));
+            ub = new BigInt(BigInteger.Parse("58149737003040059690390169"));
             Test(a, b2, lb, ub);
         }
 
@@ -242,8 +243,16 @@ namespace CNFTestsNamespace
 
             a = new KnuthUpArrow(new BigInt(5), new BigInt(3), 2);
             b1 = new KnuthUpArrow(new BigInt(4), new BigInt(3), 1);
-            lb = new KnuthUpArrow(new BigInt(5), new BigInt(3), 2);
-            ub = new KnuthUpArrow(new BigInt(5), new BigInt(4), 2);
+            lb = new KnuthUpArrow(new BigInt(5), new BigInt(3128), 1);
+            ub = new KnuthUpArrow(new BigInt(6), new BigInt(3128), 1);
+            Test(a, b1, lb, ub);
+
+            a = new KnuthUpArrow(new BigInt(5), new BigInt(3), 2);
+            b1 = new KnuthUpArrow(new BigInt(6), new BigInt(3), 2);
+            //(x.a ^ (y.b * log(x.a, y.a) + x.b
+            //5^3125 * 6^46656 -> 5^46656*log_5(6)+3125
+            lb = new KnuthUpArrow(new BigInt(5), new BigInt(96437), 1);
+            ub = new KnuthUpArrow(new BigInt(6), new BigInt(96437), 1);
             Test(a, b1, lb, ub);
 
             a = new KnuthUpArrow(new BigInt(3), new BigInt(4), 2);
@@ -259,7 +268,7 @@ namespace CNFTestsNamespace
             OperationMultiplication op = new OperationMultiplication(aOneArrow, b2);
             ResultPair p = op.Evaluate();
 
-            Test(a, b1, p.LowerBound, p.UpperBound);
+            Test(a, b2, p.LowerBound, p.UpperBound);
         }
 
 
@@ -271,8 +280,8 @@ namespace CNFTestsNamespace
 
             a = new KnuthUpArrow(3, 3, 1);
             b1 = new BigInt(3);
-            lb1 = new BigInt(30);
-            ub1 = new BigInt(30);
+            lb1 = new BigInt(81);
+            ub1 = new BigInt(81);
             Test(a, b1, lb1, ub1);
 
             a = new KnuthUpArrow(4, 5, 1);
@@ -288,10 +297,11 @@ namespace CNFTestsNamespace
             Test(a, b1, lb2, ub2);
 
             a = new KnuthUpArrow(new BigInt(4), new BigInt(2000), 1);
-            b2 = new KnuthUpArrow(new BigInt(64), new BigInt(512), 1);
-
-            lb2 = new KnuthUpArrow(new BigInt(4), new BigInt(3536), 1);
-            ub2 = new KnuthUpArrow(new BigInt(5), new BigInt(3536), 1);
+            b2 = new KnuthUpArrow(new BigInt(64), new BigInt(1512), 1);
+            //(x.a ^ (y.b * log(x.a, y.a) + x.b
+            //1512*log_4(64)+2000 = 6536
+            lb2 = new KnuthUpArrow(new BigInt(4), new BigInt(6536), 1);
+            ub2 = new KnuthUpArrow(new BigInt(5), new BigInt(6536), 1);
             Test(a, b2, lb2, ub2);
         }
     }
