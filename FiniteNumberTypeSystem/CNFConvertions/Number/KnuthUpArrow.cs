@@ -69,8 +69,7 @@ namespace CNFConvertions.Number
 
         public KnuthUpArrow? ToOneArrow()
         {
-            KnuthUpArrow right = new KnuthUpArrow(a, new BigInt(((BigInteger)b) - 1), 2);
-            BigInt? newB = right.ToBigInt();
+            BigInt? newB = EvalTower(a, new BigInt(((BigInteger)b) - 1), 2);
             if (newB is null) return null;
             else return new KnuthUpArrow(a, newB, 1);
         }
@@ -96,8 +95,8 @@ namespace CNFConvertions.Number
                     if (isBigIntConvertible && !isOtherBigIntConvertible) return -1;
                     if (!isBigIntConvertible && isOtherBigIntConvertible) return 1;
 
-                    int cdpThis = CountDigitsPow(b, a);
-                    int cdpOther = CountDigitsPow(item.B, item.A);
+                    BigInteger cdpThis = CountDigitsPow(b, a);
+                    BigInteger cdpOther = CountDigitsPow(item.B, item.A);
 
                     if (cdpThis == cdpOther && isBigIntConvertible && isOtherBigIntConvertible) return ToBigInt().CompareTo(item.ToBigInt());
                     else return cdpThis.CompareTo(cdpOther);
@@ -113,20 +112,24 @@ namespace CNFConvertions.Number
                     else if (!(oneArrowThis is null) && !(oneArrowOther is null)) return oneArrowThis.CompareTo(oneArrowOther);
                     else
                     {
-                        BigInteger a1, b1, a2, b2;
-                        if (b <= item.B)
-                        {
-                            a1 = a; a2 = item.A;
-                            b1 = b; b2 = item.B;
-                        }
-                        else
-                        {
-                            a1 = item.A; a2 = a;
-                            b1 = item.B; b2 = b;
-                        }
-                        BigInt leftCmp = new BigInt(a1 * (BigInteger)BigInteger.Log(a1));
-                        KnuthUpArrow rightCmp = new KnuthUpArrow(item.A, new BigInt((b2 - b1 + 1) * (BigInteger)BigInteger.Log(a2)), 2);
-                        return leftCmp.CompareTo(rightCmp);
+                        if (b > item.b) return -item.CompareTo(this);
+
+                        BigInteger leftPart = a * (BigInteger)BigInteger.Log(a) / (BigInteger)BigInteger.Log(item.a);
+                        if (leftPart == 0) return -1;
+
+                        BigInt knuthB = new BigInt(item.b.N - b.N + 1);
+
+                        if (knuthB == 1) return leftPart.CompareTo(item.A);
+
+                        KnuthUpArrow right;
+                        if (knuthB == 2) right = new KnuthUpArrow(item.A, item.A, 1);
+                        else right = new KnuthUpArrow(item.A, knuthB, 2);
+
+                        INumber left;
+                        if (BigInt.IsConvertible(leftPart)) left = new BigInt(leftPart);
+                        else left = new KnuthUpArrow(10, CountDigits(leftPart), 1);
+
+                        return left.CompareTo(right);
                     }
                 }
 
@@ -177,27 +180,28 @@ namespace CNFConvertions.Number
 
                 if (n == 2 && item.N == 3)
                 {
-                    if (TRITRI_3.Equals(item.N)) return CompareTo(TRITRI_2);
+                    if (TRITRI_3.Equals(item)) return CompareTo(TRITRI_2);
                     else return -1;
                 }
 
-                if (n < 4 && item.N < 4) return item.CompareTo(this);
+                if (n < 4 && item.N < 4) return -item.CompareTo(this);
 
-                if (b == item.b) return a.CompareTo(item.a);
-                return b.CompareTo(item.b);
+                if (n != item.n) return n.CompareTo(item.n);
+                if (b != item.b) return b.CompareTo(item.b);
+                return a.CompareTo(item.a);
             }
-            if (other.GetType() == typeof(FGH)) return 1;
+            if (other.GetType() == typeof(FGH)) return -1;
 
             throw new NotImplementedException();
         }
 
-        public bool Equals(KnuthUpArrow other) => a == other.a && b == other.b && n == other.n;
+        public BigInt? ToBigInt() => EvalTower(a, b, n);
 
-        public BigInt? ToBigInt()
+        private static BigInt EvalTower(BigInt a, BigInt b, int n)
         {
             bool toBigInt = false;
 
-            if (n == 1) toBigInt = BigInteger.Multiply(b, (int)Math.Ceiling(BigInteger.Log10(a))) <= 1000;
+            if (n == 1 && b.N < new BigInteger(double.MaxValue)) toBigInt = ((double)b.N * BigInteger.Log10(a)) <= 1000;
             if (n == 2) toBigInt = (a <= new BigInt(4)) && (b <= new BigInt(3));
 
             if (toBigInt) return new BigInt(Arrow(a, b, n));

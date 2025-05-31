@@ -14,6 +14,8 @@ namespace CNFConvertions.Number
 
         public abstract INumber Succ();
 
+        public bool Equals(INumber? other) => this.CompareTo(other) == 0;
+
         public override ResultPair Evaluate() => new ResultPair(this, this);
 
         public static bool operator >=(INumber a, INumber b) => a.CompareTo(b) >= 0;
@@ -50,7 +52,7 @@ namespace CNFConvertions.Number
 
         И надо еще разобрать случай когда меньше цифр чем 15 у a.
         */
-        public static int CountDigitsPow(BigInteger a, BigInteger b)
+        public static BigInteger CountDigitsPow(BigInteger a, BigInteger b)
         {
             const int scale = 15;
             if (a.IsZero) return 1;
@@ -60,7 +62,7 @@ namespace CNFConvertions.Number
             int digitsA = CountDigits(a);
 
             if (b == 1) return digitsA;
-            if (IsPowerOf10(a)) return (int)(b * (BigInteger)Math.Ceiling(BigInteger.Log10(a))) + 1;
+            if (IsPowerOf10(a)) return b * (BigInteger)Math.Ceiling(BigInteger.Log10(a)) + 1;
 
             if (digitsA <= scale)
             {

@@ -51,8 +51,6 @@ namespace CNFConvertions.Number
             this.n = new BigInt(n);
         }
 
-        public bool Equals(FGH other) => alpha.Equals(other.alpha) && n.Equals(other.n);
-
         public static FGH GetMin() => MIN_VALUE;
 
         public override string ToString() => "f(" + alpha.ToString() + ", " + n.ToString() + ")";
@@ -63,8 +61,8 @@ namespace CNFConvertions.Number
         {
             if (other is null) return 0;
 
-            if (other.GetType() == typeof(BigInt)) return -1;
-            if (other.GetType() == typeof(KnuthUpArrow)) return -1;
+            if (other.GetType() == typeof(BigInt)) return 1;
+            if (other.GetType() == typeof(KnuthUpArrow)) return 1;
             if (other.GetType() == typeof(FGH))
             {
                 FGH item = (FGH) other;

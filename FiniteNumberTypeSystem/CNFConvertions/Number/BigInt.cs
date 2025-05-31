@@ -28,7 +28,6 @@ namespace CNFConvertions.Number
             this.n = n;
         }
 
-        public bool Equals(BigInt other) => n.Equals(other.n);
 
         public static BigInt GetMax() => MAX_VALUE;
 
@@ -53,10 +52,10 @@ namespace CNFConvertions.Number
                 KnuthUpArrow item = (KnuthUpArrow)other;
                 BigInt? itemBigInt = item.ToBigInt();
                 if (!(itemBigInt is null)) return CompareTo(itemBigInt);
-                else return 1;
+                else return -1;
             }
 
-            if (other.GetType() == typeof(FGH)) return 1;
+            if (other.GetType() == typeof(FGH)) return -1;
 
             throw new NotImplementedException();
         }
@@ -64,7 +63,7 @@ namespace CNFConvertions.Number
         public override INumber Succ()
         {
             if (n < MAX_VALUE) return new BigInt(n + 1);
-            else return new KnuthUpArrow(10, CountDigits(n), 1);
+            else return new KnuthUpArrow(10, CountDigits(n) - 1, 1);
         }
 
         public BigInt Prev()

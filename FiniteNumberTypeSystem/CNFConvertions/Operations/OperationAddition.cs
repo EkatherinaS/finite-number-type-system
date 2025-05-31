@@ -1,5 +1,4 @@
-﻿using System;
-using CNFConvertions.Number;
+﻿using CNFConvertions.Number;
 using System.Numerics;
 
 namespace CNFConvertions.Operations
