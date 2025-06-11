@@ -3,6 +3,7 @@ using System.Numerics;
 
 namespace CNFConvertions.Number
 {
+    [System.Serializable]
     public class BigInt : INumber
     {
         private static readonly BigInteger MAX = BigInteger.Pow(10, Constants.EXPONENT);

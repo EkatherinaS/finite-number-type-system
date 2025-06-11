@@ -4,6 +4,7 @@ using System.Numerics;
 
 namespace CNFConvertions.Number
 {
+    [System.Serializable]
     public abstract class INumber : IExpression, IComparable<INumber>
     {
         public abstract override string ToString();

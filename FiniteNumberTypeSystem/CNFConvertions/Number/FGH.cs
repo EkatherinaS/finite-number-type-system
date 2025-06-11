@@ -5,6 +5,7 @@ using Assets.Scripts.AssemblyMath;
 
 namespace CNFConvertions.Number
 {
+    [System.Serializable]
     public class FGH : INumber
     {
         private CNFOrdinal alpha;

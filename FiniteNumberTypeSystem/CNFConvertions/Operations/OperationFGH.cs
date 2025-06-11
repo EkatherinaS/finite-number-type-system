@@ -3,6 +3,7 @@ using CNFConvertions.Number;
 
 namespace CNFConvertions.Operations
 {
+    [System.Serializable]
     public class OperationFGH : IOperation
     {
         // Constructor might be needed if IExpression a, b are used.

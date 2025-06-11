@@ -3,6 +3,7 @@ using System.Numerics;
 
 namespace CNFConvertions.Operations
 {
+    [System.Serializable]
     public class OperationAddition : IOperation
     {
         public OperationAddition(IExpression a, IExpression b)

@@ -3,6 +3,7 @@ using CNFConvertions.Number;
 
 namespace CNFConvertions.Operations
 {
+    [System.Serializable]
     public class OperationKnuthUpArrow : IOperation
     {
         // Constructor might be needed

@@ -4,6 +4,7 @@ using System.Numerics;
 
 namespace CNFConvertions.Number
 {
+    [System.Serializable]
     public class KnuthUpArrow : INumber
     {
         private static readonly KnuthUpArrow MAX_VALUE = new KnuthUpArrow(BigInt.GetMax(), BigInt.GetMax(), Constants.ARROW_COUNT);

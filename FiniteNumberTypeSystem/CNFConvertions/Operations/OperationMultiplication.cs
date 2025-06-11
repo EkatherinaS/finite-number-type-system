@@ -2,6 +2,7 @@
 
 namespace CNFConvertions.Operations
 {
+    [System.Serializable]
     public class OperationMultiplication : IOperation
     {
         public OperationMultiplication(IExpression a, IExpression b)

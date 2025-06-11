@@ -3,6 +3,7 @@ using CNFConvertions.Number;
 
 namespace CNFConvertions.Operations
 {
+    [System.Serializable]
     public class OperationPower : IOperation
     {
         public OperationPower(IExpression a, IExpression b)
