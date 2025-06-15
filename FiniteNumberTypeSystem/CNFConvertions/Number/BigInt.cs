@@ -85,24 +85,28 @@ namespace CNFConvertions.Number
         public static implicit operator BigInteger(BigInt bigInt) => bigInt.n;
 
         public static bool IsConvertible(BigInteger n) => (n >= 1 && n <= MAX);
+
         public static BigInt? Sum(BigInt a, BigInt b)
         {
             BigInteger res = BigInteger.Add(a.n, b.n);
             if (IsConvertible(res)) return new BigInt(res);
             else return null;
         }
+
         public static BigInt? Mul(BigInt a, BigInt b)
         {
             BigInteger res = BigInteger.Multiply(a.n, b.n);
             if (IsConvertible(res)) return new BigInt(res);
             else return null;
         }
+
         public static BigInt? Pow(BigInt a, int exponent)
         {
             BigInteger res = BigInteger.Pow(a.n, exponent);
             if (IsConvertible(res)) return new BigInt(res);
             else return null;
         }
+
         public static BigInt? Log(BigInt b, BigInt val)
         {
             //while double is enough

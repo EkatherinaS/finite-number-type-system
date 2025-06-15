@@ -73,7 +73,11 @@ namespace CNFConvertions.Operations
             if (b.N == 1)
             {
                 //LB = (x.a^(log(x.a, y) + x.b)) UB = LB++
-                BigInt temp = BigInt.Sum(BigInt.Log(b.A, a), b.B);
+                BigInt? log = BigInt.Log(b.A, a);
+                if (log is null) log = new BigInt(1);
+                BigInt? temp = BigInt.Sum(log, b.B);
+                if (temp is null) temp = new BigInt(3);
+
                 INumber lb = new KnuthUpArrow(b.A, temp, 1);
                 return new ResultPair(lb, lb.Succ());
             }

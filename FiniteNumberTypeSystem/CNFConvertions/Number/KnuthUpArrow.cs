@@ -95,8 +95,8 @@ namespace CNFConvertions.Number
                     if (isBigIntConvertible && !isOtherBigIntConvertible) return -1;
                     if (!isBigIntConvertible && isOtherBigIntConvertible) return 1;
 
-                    BigInteger cdpThis = CountDigitsPow(b, a);
-                    BigInteger cdpOther = CountDigitsPow(item.B, item.A);
+                    BigInteger cdpThis = CountDigitsPow(a, b);
+                    BigInteger cdpOther = CountDigitsPow(item.A, item.B);
 
                     if (cdpThis == cdpOther && isBigIntConvertible && isOtherBigIntConvertible) return ToBigInt().CompareTo(item.ToBigInt());
                     else return cdpThis.CompareTo(cdpOther);
