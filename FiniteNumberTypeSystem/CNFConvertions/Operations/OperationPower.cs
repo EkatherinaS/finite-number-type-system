@@ -126,13 +126,18 @@ namespace CNFConvertions.Operations
                 if (rTemp is null || rTemp == new BigInt(1)) r = new BigInt(2);
                 else r = rTemp;
 
-                BigInteger kLb = INumber.BinarySearch(1, BigInt.GetMax(), (BigInteger x) => {
+                BigInteger min, max;
+                if (b.A.CompareTo(b.B) > 0) { min = b.B; max = b.A; } 
+                else { min = b.A; max = b.B; }
+                min -= r;
+
+                BigInteger kLb = INumber.BinarySearch(min, max, (BigInteger x) => {
                     if (x - r < 3 || x < 3) return false;
                     else return b.CompareTo(new KnuthUpArrow(new BigInt(x), new BigInt(x - 1), 1)) <= 0;
                     }
                 ) - 1;
 
-                BigInteger kUb = INumber.BinarySearch(1, BigInt.GetMax(), (BigInteger x) => {
+                BigInteger kUb = INumber.BinarySearch(min, max, (BigInteger x) => {
                     if (x - r < 3 || x < 3) return false;
                     else return b.CompareTo(new KnuthUpArrow(new BigInt(x), new BigInt(x - r), 1)) <= 0;
                     }

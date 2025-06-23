@@ -14,7 +14,11 @@ namespace CNFConvertions.Operations
         {
             INumber res;
 
-            BigInt? temp = BigInt.Mul(a, b);
+            int digitsLB = INumber.CountDigits(a) + INumber.CountDigits(b) - 10;
+
+            BigInt? temp = null;
+            if (digitsLB <= Constants.EXPONENT) temp = BigInt.Mul(a, b);
+
             if (temp is null)
             {
                 BigInt knuthA = new BigInt(10);
