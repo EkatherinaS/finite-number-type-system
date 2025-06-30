@@ -3,6 +3,7 @@ using CNFConvertions.Number;
 
 namespace CNFConvertions.Operations
 {
+    [System.Serializable]
     public abstract class IOperation : IExpression
     {
         protected IExpression? a;

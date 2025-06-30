@@ -7,6 +7,7 @@ namespace Assets.Scripts.AssemblyMath
     /// Represents an ordinal (finite or below ε₀) in Cantor Normal Form.
     /// Zero is represented as an empty sequence.
     /// </summary>
+    [System.Serializable]
     public partial class CNFOrdinal : IComparable<CNFOrdinal>
     {
         internal readonly CNFOrdinalTerm[] _terms;

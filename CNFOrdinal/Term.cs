@@ -5,6 +5,7 @@ namespace Assets.Scripts.AssemblyMath
     /// <summary>
     /// Represents a single term in Cantor Normal Form: ω^(Exponent) * Coefficient.
     /// </summary>
+    [System.Serializable]
     public struct CNFOrdinalTerm
     {
         /// <summary>

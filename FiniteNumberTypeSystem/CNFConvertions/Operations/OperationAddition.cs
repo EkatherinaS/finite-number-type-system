@@ -1,9 +1,9 @@
-﻿using System;
-using CNFConvertions.Number;
+﻿using CNFConvertions.Number;
 using System.Numerics;
 
 namespace CNFConvertions.Operations
 {
+    [System.Serializable]
     public class OperationAddition : IOperation
     {
         public OperationAddition(IExpression a, IExpression b)
