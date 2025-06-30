@@ -15,7 +15,11 @@ namespace CNFConvertions.Operations
         {
             INumber res;
 
-            BigInt? temp = BigInt.Mul(a, b);
+            int digitsLB = INumber.CountDigits(a) + INumber.CountDigits(b) - 10;
+
+            BigInt? temp = null;
+            if (digitsLB <= Constants.EXPONENT) temp = BigInt.Mul(a, b);
+
             if (temp is null)
             {
                 BigInt knuthA = new BigInt(10);
@@ -74,7 +78,11 @@ namespace CNFConvertions.Operations
             if (b.N == 1)
             {
                 //LB = (x.a^(log(x.a, y) + x.b)) UB = LB++
-                BigInt temp = BigInt.Sum(BigInt.Log(b.A, a), b.B);
+                BigInt? log = BigInt.Log(b.A, a);
+                if (log is null) log = new BigInt(1);
+                BigInt? temp = BigInt.Sum(log, b.B);
+                if (temp is null) temp = new BigInt(3);
+
                 INumber lb = new KnuthUpArrow(b.A, temp, 1);
                 return new ResultPair(lb, lb.Succ());
             }

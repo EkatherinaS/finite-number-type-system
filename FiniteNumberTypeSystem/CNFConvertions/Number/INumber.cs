@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 
@@ -53,6 +54,16 @@ namespace CNFConvertions.Number
 
         И надо еще разобрать случай когда меньше цифр чем 15 у a.
         */
+
+        private static BigInteger Multiply(BigInteger a, double b)
+        {
+            double adjust = Math.Pow(10, 308 - Math.Ceiling(Math.Log10(b)));
+            double adjusted = b * adjust;
+            BigInteger res = BigInteger.Multiply(a, (BigInteger)adjusted);
+            return BigInteger.Divide(res, (BigInteger)adjust);
+        }
+
+
         public static BigInteger CountDigitsPow(BigInteger a, BigInteger b)
         {
             const int scale = 15;
@@ -67,18 +78,21 @@ namespace CNFConvertions.Number
 
             if (digitsA <= scale)
             {
-                double logA = Math.Log10((double)a);
-                double result = (double)b * logA;
-                return (int)Math.Floor(result) + 1;
+                double logA = BigInteger.Log10(a);
+                BigInteger biLogA = (BigInteger)logA;
+                BigInteger result;
+                if (biLogA < (BigInteger)double.MaxValue) result = Multiply(b, logA);
+                else result = BigInteger.Multiply(b, biLogA);
+                return result + 1;
             }
 
             //Где этот хвостик от мантиссы можно посчитать через логарифм у double'а который потом кидаем в fixed point арифметику
             string aStr = a.ToString();
             string leadingStr = aStr.Substring(0, scale);
-            double leadingDigits = double.Parse(leadingStr);
+            BigInteger leadingDigits = new BigInteger(double.Parse(leadingStr));
 
             //scaled_mantissa_log = floor(Math.Log10(leadingDigits(a, scale)) × 10 ^ scale)
-            BigInteger scaledMantissaLog = new BigInteger(Math.Floor(Math.Log10(leadingDigits) * Math.Pow(10, scale)));
+            BigInteger scaledMantissaLog = BigInteger.Multiply((BigInteger)BigInteger.Log10(leadingDigits), BigInteger.Pow(10, scale));
 
             //b × (digits(a) - 1) 
             BigInteger term1 = (b * (digitsA - 1));
@@ -88,7 +102,7 @@ namespace CNFConvertions.Number
 
             // digits(a ^ b) = b × log10(a) + 1 = b × (digits(a) - 1) + floor(b × log10(mantissa(a)) + 1
             BigInteger totalDigits = term1 + term2 + 1;
-            return (int)totalDigits;
+            return totalDigits;
         }
 
         private static bool IsPowerOf10(BigInteger a)
@@ -96,6 +110,17 @@ namespace CNFConvertions.Number
             if (a < 1) return false;
             string s = a.ToString();
             return s[0] == '1' && s.Substring(1).All(c => c == '0');
+        }
+
+        public static BigInteger BinarySearch(BigInteger left, BigInteger right, Func<BigInteger, bool> predicate)
+        {
+            while (left < right)
+            {
+                BigInteger mid = left + (right - left) / 2;
+                if (predicate(mid)) right = mid;
+                else left = mid + 1;
+            }
+            return left;
         }
     }
 }
