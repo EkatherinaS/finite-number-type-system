@@ -6,7 +6,7 @@ using CNFConvertions;
 namespace CNFTestsNamespace
 {
     [TestFixture]
-    [Timeout(2000)]
+    [Timeout(1000)]
     internal class CNFPowerTests
     {
         private void Test(INumber a, INumber b, INumber lb, INumber ub)
@@ -355,7 +355,7 @@ namespace CNFTestsNamespace
             a = new KnuthUpArrow(xa, xb, 1);
             b = y;
             Test(a, b, p.LowerBound, p.UpperBound);
-
+            
             xa = new BigInt(42);
             xb = BigInt.GetMax();
             y = BigInt.GetMax();
@@ -379,10 +379,10 @@ namespace CNFTestsNamespace
             KnuthUpArrow y;
             OperationPower opPow;
             OperationMultiplication opMul;
-            ResultPair p, pMul;
+            ResultPair p1, p2, pMul;
 
             //x.a^(x.b * y)
-
+            
             xa = new BigInt(42);
             xb = BigInt.GetMax();
             y = new KnuthUpArrow(7, 3, 1);
@@ -391,17 +391,17 @@ namespace CNFTestsNamespace
             pMul = opMul.Evaluate();
 
             opPow = new OperationPower(xa, pMul.LowerBound);
-            p = opPow.Evaluate();
-            lb = p.LowerBound;
+            p1 = opPow.Evaluate();
 
             opPow = new OperationPower(xa, pMul.UpperBound);
-            p = opPow.Evaluate();
-            ub = p.UpperBound;
+            p2 = opPow.Evaluate();
+
+            lb = p1.LowerBound < p2.LowerBound ? p1.LowerBound : p2.LowerBound;
+            ub = p1.UpperBound > p2.UpperBound ? p1.UpperBound : p2.UpperBound;
 
             a = new KnuthUpArrow(xa, xb, 1);
             b = y;
             Test(a, b, lb, ub);
-
 
             xa = new BigInt(42);
             xb = BigInt.GetMax();
@@ -411,12 +411,13 @@ namespace CNFTestsNamespace
             pMul = opMul.Evaluate();
 
             opPow = new OperationPower(xa, pMul.LowerBound);
-            p = opPow.Evaluate();
-            lb = p.LowerBound;
+            p1 = opPow.Evaluate();
 
             opPow = new OperationPower(xa, pMul.UpperBound);
-            p = opPow.Evaluate();
-            ub = p.UpperBound;
+            p2 = opPow.Evaluate();
+
+            lb = p1.LowerBound < p2.LowerBound ? p1.LowerBound : p2.LowerBound;
+            ub = p1.UpperBound > p2.UpperBound ? p1.UpperBound : p2.UpperBound;
 
             a = new KnuthUpArrow(xa, xb, 1);
             b = y;

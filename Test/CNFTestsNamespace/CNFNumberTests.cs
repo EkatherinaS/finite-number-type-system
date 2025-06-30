@@ -16,11 +16,11 @@ namespace CNFTestsNamespace
 
             bigInt = new BigInt(1);
             Assert.IsTrue(bigInt.ToString().Equals("1"));
-            Assert.IsTrue(bigInt.ToLaTeX().Equals("1"));
+            Assert.IsTrue(bigInt.ToLatex().Equals("1"));
 
             bigInt = new BigInt(100000);
             Assert.IsTrue(bigInt.ToString().Equals("100000"));
-            Assert.IsTrue(bigInt.ToLaTeX().Equals("100000"));
+            Assert.IsTrue(bigInt.ToLatex().Equals("100000"));
 
             string max = "1";
             string min = "1";
@@ -31,8 +31,8 @@ namespace CNFTestsNamespace
 
             Assert.IsTrue(BigInt.GetMin().ToString().Equals(min));
             Assert.IsTrue(BigInt.GetMax().ToString().Equals(max));
-            Assert.IsTrue(BigInt.GetMin().ToLaTeX().Equals(min));
-            Assert.IsTrue(BigInt.GetMax().ToLaTeX().Equals(max));
+            Assert.IsTrue(BigInt.GetMin().ToLatex().Equals(min));
+            Assert.IsTrue(BigInt.GetMax().ToLatex().Equals(max));
 
             Assert.Throws<ArgumentException>(() => new BigInt(0));
             Assert.Throws<ArgumentException>(() => new BigInt(BigInteger.Pow(10, Constants.EXPONENT) + 1));
@@ -54,9 +54,9 @@ namespace CNFTestsNamespace
             Assert.IsTrue(arrow2.ToString().Equals("3↑↑3"));
             Assert.IsTrue(arrow3.ToString().Equals("3↑↑↑4"));
 
-            Assert.IsTrue(arrow1.ToLaTeX().Equals("3 \\uparrow 4"));
-            Assert.IsTrue(arrow2.ToLaTeX().Equals("3 \\uparrow \\uparrow 3"));
-            Assert.IsTrue(arrow3.ToLaTeX().Equals("3 \\uparrow \\uparrow \\uparrow 4"));
+            Assert.IsTrue(arrow1.ToLatex().Equals("3 \\uparrow 4"));
+            Assert.IsTrue(arrow2.ToLatex().Equals("3 \\uparrow \\uparrow 3"));
+            Assert.IsTrue(arrow3.ToLatex().Equals("3 \\uparrow \\uparrow \\uparrow 4"));
 
             var min = KnuthUpArrow.GetMin();
             Assert.IsTrue(min.A.Equals(new BigInt(3)));
@@ -93,7 +93,7 @@ namespace CNFTestsNamespace
         {
             FGH fgh = new FGH(CNFHelper.GetOrdinal(1000), new BigInt(42));
             Assert.IsTrue(fgh.ToString().Equals("f(1000, 42)"));
-            Assert.IsTrue(fgh.ToLaTeX().Equals("f_{1000}(42)"));
+            Assert.IsTrue(fgh.ToLatex().Equals("f_{1000}(42)"));
 
             Assert.Throws<ArgumentException>(() => new FGH(CNFHelper.GetOrdinal(999), new BigInt(3)));
             Assert.Throws<ArgumentException>(() => new FGH(CNFHelper.GetOrdinal(1000), new BigInt(2)));

@@ -41,6 +41,18 @@ namespace CNFConvertions.Number
             this.n = n;
         }
 
+        public override string ToLatex()
+        {
+            string baseStr = a.ToString();
+            string expStr = b.ToString();
+            string arrows = " ";
+            for (int i = 0; i < n; i++)
+            {
+                arrows += "\\uparrow ";
+            }
+            return baseStr + arrows + expStr;
+        }
+
         public override string ToString()
         {
             string baseStr = a.ToString();
@@ -52,18 +64,7 @@ namespace CNFConvertions.Number
             }
             return baseStr + arrows + expStr;
         }
-
-        public override string ToLaTeX()
-        {
-            string baseStr = a.ToString();
-            string expStr = b.ToString();
-            string arrows = " ";
-            for (int i = 0; i < n; i++)
-            {
-                arrows += "\\uparrow ";
-            }
-            return baseStr + arrows + expStr;
-        }
+        public override string ToLatexCompressed() => a.ToLatexCompressed() + "\\uparrow^" + n + b.ToLatexCompressed();
 
         public static KnuthUpArrow GetMax() => MAX_VALUE;
         public static KnuthUpArrow GetMin() => MIN_VALUE;

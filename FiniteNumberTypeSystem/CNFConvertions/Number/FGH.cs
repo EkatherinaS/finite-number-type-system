@@ -52,11 +52,13 @@ namespace CNFConvertions.Number
             this.n = new BigInt(n);
         }
 
+        public override string ToLatex() => "f_{" + alpha.ToLatex() + "}(" + n.ToLatex() + ")";
+        public override string ToLatexCompressed() => "f_{" + alpha.ToLatex() + "}(" + n.ToLatexCompressed() + ")";
+
+
         public static FGH GetMin() => MIN_VALUE;
 
         public override string ToString() => "f(" + alpha.ToString() + ", " + n.ToString() + ")";
-
-        public override string ToLaTeX() => "f_{" + alpha.ToLaTeX() + "}(" + n.ToLaTeX() + ")";
 
         public override int CompareTo(INumber? other)
         {

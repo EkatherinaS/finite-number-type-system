@@ -9,6 +9,7 @@ namespace CNFConvertions.Operations
         protected IExpression? a;
         protected IExpression? b;
 
+
         // Specific operation implementations for different number type combinations
         protected abstract ResultPair EvaluateNumbers(BigInt a, BigInt b);
         protected abstract ResultPair EvaluateNumbers(KnuthUpArrow a, KnuthUpArrow b);
@@ -58,10 +59,19 @@ namespace CNFConvertions.Operations
             ResultPair resA = EvaluateNumbers(numberA.LowerBound, numberB.LowerBound);
             ResultPair resB = EvaluateNumbers(numberA.UpperBound, numberB.UpperBound);
 
-            INumber resLowerbound = resA.LowerBound.CompareTo(resB.LowerBound) < 0 ? resA.LowerBound : resB.LowerBound;
-            INumber resUpperbound = resA.UpperBound.CompareTo(resB.UpperBound) > 0 ? resA.UpperBound : resB.UpperBound;
+            ResultPair maxPair = numberA.UpperBound.CompareTo(numberB.UpperBound) > 0 ? numberA : numberB;
 
-            return new ResultPair(resLowerbound, resUpperbound);
+            INumber resLowerbound = resA.LowerBound.CompareTo(resB.LowerBound) < 0 ? resA.LowerBound : resB.LowerBound;
+            bool wasIncremented = resA.UpperBound.CompareTo(resB.UpperBound) > 0 ? resA.WasIncremented : resB.WasIncremented;
+
+            INumber resUpperbound;
+
+            if (maxPair.WasIncremented && wasIncremented) 
+                resUpperbound = maxPair.UpperBound;
+            else 
+                resUpperbound = resA.UpperBound.CompareTo(resB.UpperBound) > 0 ? resA.UpperBound : resB.UpperBound;
+
+            return new ResultPair(resLowerbound, resUpperbound, maxPair.WasIncremented && wasIncremented);
         }
     }
 }

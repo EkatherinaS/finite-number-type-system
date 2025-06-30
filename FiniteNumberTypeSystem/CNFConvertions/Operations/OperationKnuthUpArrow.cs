@@ -6,6 +6,21 @@ namespace CNFConvertions.Operations
     [System.Serializable]
     public class OperationKnuthUpArrow : IOperation
     {
+        public override IExpression Simplify()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string ToLatex()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override string ToLatexCompressed()
+        {
+            throw new System.NotImplementedException();
+        }
+
         // Constructor might be needed
         // public OperationKnuthUpArrow(IExpression a, IExpression b)
         // {
