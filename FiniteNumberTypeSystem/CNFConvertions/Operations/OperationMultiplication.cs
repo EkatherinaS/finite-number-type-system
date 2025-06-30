@@ -10,10 +10,23 @@ namespace CNFConvertions.Operations
             this.b = b;
         }
 
+        public override IExpression? Simplify()
+        {
+            IExpression? simplified = a?.Simplify();
+            if (simplified != null) return new OperationMultiplication(simplified, b);
+
+            simplified = b?.Simplify();
+            if (simplified != null) return new OperationMultiplication(a, simplified);
+
+            return Evaluate().UpperBound;
+        }
+
+        public override string ToLatex() => "(" + a.ToLatex() + "*" + b.ToLatex() + ")";
+        public override string ToLatexCompressed() => "(" + a.ToLatexCompressed() + "*" + b.ToLatexCompressed() + ")";
+
         protected override ResultPair EvaluateNumbers(BigInt a, BigInt b)
         {
             INumber res;
-
             int digitsLB = INumber.CountDigits(a) + INumber.CountDigits(b) - 10;
 
             BigInt? temp = null;
@@ -27,7 +40,7 @@ namespace CNFConvertions.Operations
             }
             else res = temp;
 
-            return new ResultPair(res, res);
+            return new ResultPair(res, res, false);
         }
 
         protected override ResultPair EvaluateNumbers(KnuthUpArrow a, KnuthUpArrow b)
@@ -44,7 +57,7 @@ namespace CNFConvertions.Operations
                 if (a.A > b.A || (a.A == b.A && a.B < b.B)) return EvaluateNumbers(b, a);
                 BigInt temp = BigInt.Sum(BigInt.Mul(b.B, BigInt.Log(a.A, b.A)), a.B);
                 INumber lb = new KnuthUpArrow(a.A, temp, 1);
-                return new ResultPair(lb, lb.Succ());
+                return new ResultPair(lb, lb.Succ(), true);
             }
 
             //eval as one arrow if possible
@@ -53,18 +66,18 @@ namespace CNFConvertions.Operations
             if (!(knuthOneA is null || knuthOneB is null)) return EvaluateNumbers(knuthOneA, knuthOneB);
 
             if (a.N <= 2 && b.N <= 2) {
-                if (a > b) return new ResultPair(a, a.SuccB());
-                else return new ResultPair(b, b.SuccB());
+                if (a > b) return new ResultPair(a, a.SuccB(), true);
+                else return new ResultPair(b, b.SuccB(), true);
             }
 
-            if (a > b) return new ResultPair(a, a.SuccA());
-            else return new ResultPair(b, b.SuccA());
+            if (a > b) return new ResultPair(a, a.SuccA(), true);
+            else return new ResultPair(b, b.SuccA(), true);
         }
 
         protected override ResultPair EvaluateNumbers(FGH a, FGH b)
         {
-            if (a > b) return new ResultPair(a, a.Succ());
-            else return new ResultPair(b, b.Succ());
+            if (a > b) return new ResultPair(a, a.Succ(), true);
+            else return new ResultPair(b, b.Succ(), true);
         }
 
         protected override ResultPair EvaluateNumbers(BigInt a, KnuthUpArrow b)
@@ -83,7 +96,7 @@ namespace CNFConvertions.Operations
                 if (temp is null) temp = new BigInt(3);
 
                 INumber lb = new KnuthUpArrow(b.A, temp, 1);
-                return new ResultPair(lb, lb.Succ());
+                return new ResultPair(lb, lb.Succ(), true);
             }
 
             //eval as one arrow if possible
@@ -91,11 +104,11 @@ namespace CNFConvertions.Operations
             if (!(knuthOne is null)) return EvaluateNumbers(a, knuthOne);
 
             //y .a "+1" в UB
-            return new ResultPair(b, b.Succ());
+            return new ResultPair(b, b.Succ(), true);
         }
 
-        protected override ResultPair EvaluateNumbers(BigInt a, FGH b) => new ResultPair(b, b.Succ());
+        protected override ResultPair EvaluateNumbers(BigInt a, FGH b) => new ResultPair(b, b.Succ(), true);
 
-        protected override ResultPair EvaluateNumbers(KnuthUpArrow a, FGH b) => new ResultPair(b, b.Succ());
+        protected override ResultPair EvaluateNumbers(KnuthUpArrow a, FGH b) => new ResultPair(b, b.Succ(), true);
     }
 }

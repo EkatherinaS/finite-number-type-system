@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 
@@ -9,7 +8,8 @@ namespace CNFConvertions.Number
     {
         public abstract override string ToString();
 
-        public abstract string ToLaTeX();
+        //TODO: should return null?
+        public override IExpression? Simplify() => null;
 
         public abstract int CompareTo(INumber? other);
 
@@ -17,7 +17,7 @@ namespace CNFConvertions.Number
 
         public bool Equals(INumber? other) => this.CompareTo(other) == 0;
 
-        public override ResultPair Evaluate() => new ResultPair(this, this);
+        public override ResultPair Evaluate() => new ResultPair(this, this, false);
 
         public static bool operator >=(INumber a, INumber b) => a.CompareTo(b) >= 0;
         public static bool operator <=(INumber a, INumber b) => a.CompareTo(b) <= 0;

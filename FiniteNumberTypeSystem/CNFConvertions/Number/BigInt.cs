@@ -10,9 +10,10 @@ namespace CNFConvertions.Number
 
         private static readonly BigInt MAX_VALUE = new BigInt(MAX);
         private static readonly BigInt MIN_VALUE = new BigInt(1);
-        
+
 
         private BigInteger n;
+
         public BigInteger N { get { return n; } set { n = value; } }
 
         public BigInt(int n)
@@ -29,13 +30,15 @@ namespace CNFConvertions.Number
         }
 
 
+        public override string ToLatex() => n.ToString();
+        public override string ToLatexCompressed() => n.ToString("E");
+
+
         public static BigInt GetMax() => MAX_VALUE;
 
         public static BigInt GetMin() => MIN_VALUE;
 
         public override string ToString() => n.ToString();
-
-        public override string ToLaTeX() => n.ToString();
 
         public override int CompareTo(INumber? other)
         {

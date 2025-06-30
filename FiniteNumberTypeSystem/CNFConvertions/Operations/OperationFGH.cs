@@ -5,6 +5,21 @@ namespace CNFConvertions.Operations
 {
     public class OperationFGH : IOperation
     {
+        public override IExpression Simplify()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string ToLatex()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override string ToLatexCompressed()
+        {
+            throw new System.NotImplementedException();
+        }
+
         // Constructor might be needed if IExpression a, b are used.
         // public OperationFGH(IExpression a, IExpression b)
         // {
@@ -19,6 +34,7 @@ namespace CNFConvertions.Operations
         // {
         //     throw new NotImplementedException();
         // }
+
 
         protected override ResultPair EvaluateNumbers(BigInt a, BigInt b)
         {

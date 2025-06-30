@@ -4,6 +4,10 @@
     {
         public abstract ResultPair Evaluate();
 
-        //TODO: ToLatex
+        public abstract IExpression? Simplify();
+
+        public abstract string ToLatex();
+
+        public abstract string ToLatexCompressed();
     }
 }
